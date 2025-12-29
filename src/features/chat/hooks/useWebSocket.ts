@@ -1,0 +1,186 @@
+'use client';
+
+import { useState, useRef, useCallback } from 'react';
+import { ChatMessage, OutgoingMessage, ConnectionStatus } from '../types';
+
+export function useWebSocket() {
+  // WebSocket instance - stored in ref because it's not render-dependent
+  // useRef persists across renders but doesn't trigger re-renders when changed
+  const wsRef = useRef<WebSocket | null>(null);
+
+  // Current user ID assigned by server
+  const currentUserIDRef = useRef<string | null>(null);
+
+  // Messages array - all chat messages
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  // Connection status - controls UI state
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>('disconnected');
+
+  // Current connection info
+  const [username, setUsername] = useState<string>('');
+  const [channel, setChannel] = useState<string>('');
+
+  // This function adds a new message to our messages array
+  const addMessage = useCallback((message: ChatMessage) => {
+    setMessages(prevMessages => [...prevMessages, message]);
+  }, []);
+
+  // CONNECT FUNCTION
+  // =================
+  // Establishes WebSocket connection to the server
+  const connect = useCallback(
+    (connectUsername: string, connectChannel: string) => {
+      // Validation: Don't connect if already connected
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        console.log('[HOOK] Already connected');
+        return;
+      }
+
+      // Store connection details
+      setUsername(connectUsername);
+      setChannel(connectChannel);
+      setConnectionStatus('connecting');
+
+      // Build WebSocket URL with query parameters
+      // encodeURIComponent prevents injection attacks and handles special characters
+      const wsUrl = `ws://localhost:8080/ws?username=${encodeURIComponent(
+        connectUsername
+      )}&channel=${encodeURIComponent(connectChannel)}`;
+
+      console.log(`[HOOK] Connecting to: ${wsUrl}`);
+
+      try {
+        // Create new WebSocket instance
+        const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
+
+        // EVENT HANDLER: onopen
+        // Called when connection is successfully established
+        ws.onopen = () => {
+          console.log(
+            `[HOOK] Connected as ${connectUsername} in ${connectChannel}`
+          );
+          setConnectionStatus('connected');
+
+          // Add system message to chat
+          addMessage({
+            type: 'system',
+            username: 'System',
+            content: `Connected as ${connectUsername} to channel ${connectChannel}`,
+            timestamp: new Date().toISOString(),
+          });
+        };
+
+        // EVENT HANDLER: onmessage
+        // Called whenever a message is received from the server
+        ws.onmessage = event => {
+          try {
+            // Parse the JSON message from the server
+            const message: ChatMessage = JSON.parse(event.data);
+            console.log('[HOOK] Message received:', message);
+
+            // Special handling for user_connected message
+            // This tells us our unique user ID
+            if (message.type === 'user_connected' && message.user_id) {
+              currentUserIDRef.current = message.user_id;
+              console.log(`[HOOK] User ID assigned: ${message.user_id}`);
+            }
+
+            // Add the message to our messages array
+            addMessage(message);
+          } catch (error) {
+            console.error('[HOOK] Error parsing message:', error);
+          }
+        };
+
+        // EVENT HANDLER: onclose
+        // Called when connection closes (either intentionally or due to error)
+        ws.onclose = event => {
+          console.log(`[HOOK] Connection closed. Code: ${event.code}`);
+          setConnectionStatus('disconnected');
+          currentUserIDRef.current = null;
+          wsRef.current = null;
+
+          addMessage({
+            type: 'system',
+            username: 'System',
+            content: 'Connection closed',
+            timestamp: new Date().toISOString(),
+          });
+        };
+
+        // EVENT HANDLER: onerror
+        // Called when an error occurs
+        ws.onerror = error => {
+          console.error('[HOOK] WebSocket error:', error);
+          addMessage({
+            type: 'system',
+            username: 'System',
+            content: 'Connection error occurred',
+            timestamp: new Date().toISOString(),
+          });
+        };
+      } catch (error) {
+        console.error('[HOOK] Failed to create WebSocket:', error);
+        setConnectionStatus('disconnected');
+        addMessage({
+          type: 'system',
+          username: 'System',
+          content: 'Failed to connect to server',
+          timestamp: new Date().toISOString(),
+        });
+      }
+    },
+    [addMessage]
+  ); // Dependency: recreate if addMessage changes
+
+  // DISCONNECT FUNCTION
+  // ====================
+  // Closes the WebSocket connection gracefully
+  const disconnect = useCallback(() => {
+    if (wsRef.current) {
+      console.log('[HOOK] User initiated disconnect');
+      wsRef.current.close(); // This triggers the onclose handler
+      wsRef.current = null;
+    }
+  }, []);
+
+  // SEND MESSAGE FUNCTION
+  // ======================
+  // Sends a message through the WebSocket
+  const sendMessage = useCallback((content: string) => {
+    // Validation: Can only send if connected
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+      console.error('[HOOK] Cannot send message: not connected');
+      return;
+    }
+
+    // Validation: Don't send empty messages
+    if (!content.trim()) {
+      return;
+    }
+
+    // Create message object
+    const message: OutgoingMessage = {
+      type: 'message',
+      content: content.trim(),
+    };
+
+    // Send as JSON string
+    console.log('[HOOK] Sending message:', message);
+    wsRef.current.send(JSON.stringify(message));
+  }, []);
+
+  // This is what components using this hook will have access to
+  return {
+    messages,
+    connectionStatus,
+    username,
+    channel,
+    connect,
+    disconnect,
+    sendMessage,
+  };
+}
