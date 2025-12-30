@@ -14,7 +14,6 @@ export function ChatFeature() {
     sendMessage,
     username,
     currentUserID,
-    error,
   } = useWebSocket();
 
   // 🧪 TEST GLOBAL ERROR: Uncomment the line below to test global error.tsx
@@ -36,14 +35,6 @@ export function ChatFeature() {
           Running Next.js - Testing WebSocket connection to port 8080
         </p>
       </div>
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg">
-          <p className="font-semibold">Connection Error</p>
-          <p className="text-sm">{error}</p>
-        </div>
-      )}
 
       {/* Instructions */}
       <Instructions />
