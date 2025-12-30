@@ -3,7 +3,6 @@
 import { useWebSocket } from '../hooks/useWebSocket';
 import { ChatMessages } from './ChatMessages';
 import { ConnectionForm } from './ConnectionForm';
-import { ConnectionStatus } from './ConnectionStatus';
 import { Instructions } from './Instructions';
 import { MessageInput } from './MessageInput';
 
@@ -18,14 +17,12 @@ export function ChatFeature() {
   } = useWebSocket();
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Chat </h1>
-        <p className="text-muted-foreground">
-          <strong>
-            Running Next.js - Testing WebSocket connection to port 8080
-          </strong>
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Chat</h1>
+        <p className="text-sm text-muted-foreground">
+          Running Next.js - Testing WebSocket connection to port 8080
         </p>
       </div>
 
@@ -37,10 +34,8 @@ export function ChatFeature() {
         onConnect={connect}
         onDisconnect={disconnect}
         isConnected={connectionStatus === 'connected'}
+        connectionStatus={connectionStatus}
       />
-
-      {/* Connection Status Indicator */}
-      <ConnectionStatus status={connectionStatus} />
 
       {/* Chat Messages Display */}
       <ChatMessages messages={messages} currentUsername={username} />

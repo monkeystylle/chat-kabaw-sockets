@@ -1,14 +1,8 @@
 /**
  * CONNECTION STATUS COMPONENT
  * ============================
- * Visual indicator showing the current connection status.
- * 
- * Component Responsibilities:
- * - Display connection status to user
- * - Use color coding for quick visual feedback
- * - Show different text based on status
- * 
-
+ * Reusable visual indicator showing the current connection status.
+ *
  */
 
 'use client';
@@ -18,33 +12,45 @@ import { Badge } from '@/components/ui/badge';
 
 interface ConnectionStatusProps {
   status: ConnectionStatusType;
+  size?: 'sm' | 'md';
+  className?: string;
 }
 
-export function ConnectionStatus({ status }: ConnectionStatusProps) {
-  // Determine color and text based on status
-  // This is a simple mapping object
+export function ConnectionStatus({
+  status,
+  size = 'md',
+  className = '',
+}: ConnectionStatusProps) {
   const statusConfig = {
     connected: {
       text: 'Connected',
-      variant: 'default' as const, // Green badge
+      variant: 'default' as const,
     },
     disconnected: {
       text: 'Disconnected',
-      variant: 'secondary' as const, // Gray badge
+      variant: 'secondary' as const,
     },
     connecting: {
       text: 'Connecting...',
-      variant: 'outline' as const, // Outlined badge
+      variant: 'outline' as const,
     },
   };
 
   const config = statusConfig[status];
 
+  const sizeClasses = {
+    sm: 'text-xs px-2 py-0.5',
+    md: 'text-sm px-4 py-2',
+  };
+
   return (
-    <div className="mb-4 flex items-center justify-center">
-      <Badge variant={config.variant} className="text-sm px-4 py-2">
-        {config.text}
-      </Badge>
-    </div>
+    <Badge
+      variant={config.variant}
+      className={`${sizeClasses[size]} ${
+        status === 'connected' ? 'bg-green-600' : ''
+      } ${className}`}
+    >
+      {config.text}
+    </Badge>
   );
 }

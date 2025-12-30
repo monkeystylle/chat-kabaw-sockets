@@ -4,20 +4,24 @@ import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ConnectionStatus } from './ConnectionStatus';
+import { ConnectionStatus as ConnectionStatusType } from '../types';
 
 interface ConnectionFormProps {
-  onConnect: (username: string, channel: string) => void; // Callback when user clicks Connect
-  onDisconnect: () => void; // Callback when user clicks Disconnect
-  isConnected: boolean; // Whether we're currently connected
+  onConnect: (username: string, channel: string) => void;
+  onDisconnect: () => void;
+  isConnected: boolean;
+  connectionStatus: ConnectionStatusType;
 }
 
 export function ConnectionForm({
   onConnect,
   onDisconnect,
   isConnected,
+  connectionStatus,
 }: ConnectionFormProps) {
-  const [username, setUsername] = useState('testKabaw'); // Default value
-  const [channel, setChannel] = useState('general'); // Default value
+  const [username, setUsername] = useState('testKabaw');
+  const [channel, setChannel] = useState('general');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,14 +29,16 @@ export function ConnectionForm({
     const finalUsername = username.trim() || 'Anonymous';
     const finalChannel = channel.trim() || 'general';
 
-    // Call the parent's connect function (passed via props)
     onConnect(finalUsername, finalChannel);
   };
 
   return (
     <Card className="mb-4">
       <CardHeader>
-        <CardTitle>Connection Settings</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Connection Settings</CardTitle>
+          <ConnectionStatus status={connectionStatus} size="sm" />
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -61,20 +67,15 @@ export function ConnectionForm({
           </div>
 
           {/* Connect/Disconnect Buttons */}
-          <div className="flex gap-2">
-            <Button
-              type="submit"
-              disabled={isConnected} // Can't connect if already connected
-              className="flex-1"
-            >
+          <div className="flex gap-2 justify-end">
+            <Button type="submit" disabled={isConnected}>
               Connect
             </Button>
             <Button
               type="button"
               onClick={onDisconnect}
-              disabled={!isConnected} // Can't disconnect if not connected
-              variant="destructive" // Red color for destructive action
-              className="flex-1"
+              disabled={!isConnected}
+              variant="outline"
             >
               Disconnect
             </Button>
