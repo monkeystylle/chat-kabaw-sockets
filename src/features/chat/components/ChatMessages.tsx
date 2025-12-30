@@ -48,6 +48,9 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
     return new Date(timestamp).toLocaleTimeString();
   };
 
+  // 🧪 TEST: Uncomment the line below to simulate an error
+  // throw new Error('This is a test error to preview the error boundary!');
+
   return (
     <ScrollArea className="h-full p-4">
       <div ref={scrollContainerRef} className="space-y-4">
@@ -95,9 +98,7 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
                 </div>
 
                 {/* Message Content */}
-                <div className="text-sm wrap-break-word">
-                  {message.content}
-                </div>
+                <div className="text-sm wrap-break-word">{message.content}</div>
               </div>
             </div>
           );
