@@ -33,7 +33,7 @@ export function ChatWindow({
       </div>
 
       {/* Message Input - Fixed at bottom */}
-      <div className="border-t " style={{ border: '1px solid red' }}>
+      <div className="border-t">
         <MessageInput onSendMessage={onSendMessage} disabled={disabled} />
       </div>
     </Card>

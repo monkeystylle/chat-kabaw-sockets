@@ -81,11 +81,16 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
                     : 'bg-muted'
                 }`}
               >
-                {/* Message Header: Username + Timestamp */}
-                <div className="flex items-center gap-2 mb-1">
+                {/* Message Header: Username + User ID + Timestamp */}
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="font-semibold text-sm">
                     {message.username}
                   </span>
+                  {message.user_id && (
+                    <span className="text-xs opacity-60 bg-black/10 px-1.5 py-0.5 rounded">
+                      ID: {message.user_id}
+                    </span>
+                  )}
                   <span className="text-xs opacity-70">
                     {formatTime(message.timestamp)}
                   </span>

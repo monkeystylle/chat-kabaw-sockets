@@ -7,23 +7,48 @@ import { Instructions } from './Instructions';
 
 export function ChatFeature() {
   const {
-    messages, // Array of all chat messages
-    connectionStatus, // 'connected' | 'disconnected' | 'connecting'
-    connect, // Function to establish WebSocket connection
-    disconnect, // Function to close WebSocket connection
-    sendMessage, // Function to send a message
-    username, // Current username
+    messages,
+    connectionStatus,
+    connect,
+    disconnect,
+    sendMessage,
+    username,
+    currentUserID,
+    error,
   } = useWebSocket();
 
   return (
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold mb-2">Chat</h1>
+        <div className="flex items-center gap-3 mb-2">
+          <h1 className="text-3xl font-bold">Chat</h1>
+          {currentUserID && (
+            <span className="text-sm bg-muted px-3 py-1 rounded-full">
+              ID: {currentUserID}
+            </span>
+          )}
+        </div>
         <p className="text-sm text-muted-foreground">
           Running Next.js - Testing WebSocket connection to port 8080
         </p>
       </div>
+
+      {/* Loading State */}
+      {connectionStatus === 'connecting' && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg flex items-center gap-2">
+          <div className="animate-spin h-4 w-4 border-2 border-blue-700 border-t-transparent rounded-full"></div>
+          <p className="font-semibold">Connecting to server...</p>
+        </div>
+      )}
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg">
+          <p className="font-semibold">Connection Error</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Instructions */}
       <Instructions />

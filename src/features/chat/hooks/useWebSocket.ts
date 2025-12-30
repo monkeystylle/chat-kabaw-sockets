@@ -11,6 +11,10 @@ export function useWebSocket() {
   // Current user ID assigned by server
   const currentUserIDRef = useRef<string | null>(null);
 
+  // Track if connection was ever successfully opened
+
+  const wasConnectedRef = useRef<boolean>(false);
+
   // Messages array - all chat messages
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
@@ -21,6 +25,8 @@ export function useWebSocket() {
   // Current connection info
   const [username, setUsername] = useState<string>('');
   const [channel, setChannel] = useState<string>('');
+  const [currentUserID, setCurrentUserID] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   // This function adds a new message to our messages array
   const addMessage = useCallback((message: ChatMessage) => {
@@ -60,7 +66,9 @@ export function useWebSocket() {
           console.log(
             `[HOOK] Connected as ${connectUsername} in ${connectChannel}`
           );
+          wasConnectedRef.current = true; // Mark that we successfully connected
           setConnectionStatus('connected');
+          setError(''); // Clear any previous errors
 
           // Add system message to chat
           addMessage({
@@ -83,13 +91,14 @@ export function useWebSocket() {
             // This tells us our unique user ID
             if (message.type === 'user_connected' && message.user_id) {
               currentUserIDRef.current = message.user_id;
+              setCurrentUserID(message.user_id);
               console.log(`[HOOK] User ID assigned: ${message.user_id}`);
             }
 
             // Add the message to our messages array
             addMessage(message);
           } catch (error) {
-            console.error('[HOOK] Error parsing message:', error);
+            console.warn('[HOOK] Error parsing message:', error);
           }
         };
 
@@ -101,18 +110,29 @@ export function useWebSocket() {
           currentUserIDRef.current = null;
           wsRef.current = null;
 
-          addMessage({
-            type: 'system',
-            username: 'System',
-            content: 'Connection closed',
-            timestamp: new Date().toISOString(),
-          });
+          // Only show "Connection closed" if we were actually connected before
+          // This prevents duplicate messages when connection fails immediately
+          if (wasConnectedRef.current) {
+            addMessage({
+              type: 'system',
+              username: 'System',
+              content: 'Connection closed',
+              timestamp: new Date().toISOString(),
+            });
+          }
+
+          wasConnectedRef.current = false; // Reset the flag
         };
 
         // EVENT HANDLER: onerror
         // Called when an error occurs
         ws.onerror = error => {
-          console.error('[HOOK] WebSocket error:', error);
+          console.warn('[HOOK] WebSocket error:', error);
+          setConnectionStatus('disconnected');
+          setError('Connection error occurred');
+          currentUserIDRef.current = null;
+          wsRef.current = null;
+
           addMessage({
             type: 'system',
             username: 'System',
@@ -121,8 +141,9 @@ export function useWebSocket() {
           });
         };
       } catch (error) {
-        console.error('[HOOK] Failed to create WebSocket:', error);
+        console.warn('[HOOK] Failed to create WebSocket:', error);
         setConnectionStatus('disconnected');
+        setError('Failed to connect to server');
         addMessage({
           type: 'system',
           username: 'System',
@@ -147,7 +168,7 @@ export function useWebSocket() {
   const sendMessage = useCallback((content: string) => {
     // Validation: Can only send if connected
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.error('[HOOK] Cannot send message: not connected');
+      console.warn('[HOOK] Cannot send message: not connected');
       return;
     }
 
@@ -184,6 +205,8 @@ export function useWebSocket() {
     connectionStatus,
     username,
     channel,
+    currentUserID,
+    error,
     connect,
     disconnect,
     sendMessage,
