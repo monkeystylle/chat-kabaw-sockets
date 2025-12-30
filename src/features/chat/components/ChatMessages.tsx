@@ -29,15 +29,8 @@ interface ChatMessagesProps {
 }
 
 export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
-  // REF FOR AUTO-SCROLLING
-  // =======================
-  // useRef gives us a reference to the actual DOM element
-  // We need this to programmatically scroll to the bottom
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // AUTO-SCROLL EFFECT
-  // ===================
-  // useEffect runs after component renders
   // When messages change, we scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
@@ -57,8 +50,6 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
         {/* ScrollArea is a shadcn component that makes content scrollable */}
         <ScrollArea className="h-100 p-4">
           <div className="space-y-4">
-            {/* MAP through messages array */}
-            {/* For each message, render a message bubble */}
             {messages.map((message, index) => {
               // Check if this message is from the current user
               const isCurrentUser = message.username === currentUsername;

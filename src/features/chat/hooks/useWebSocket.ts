@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { ChatMessage, OutgoingMessage, ConnectionStatus } from '../types';
 
 export function useWebSocket() {
@@ -27,8 +27,6 @@ export function useWebSocket() {
     setMessages(prevMessages => [...prevMessages, message]);
   }, []);
 
-  // CONNECT FUNCTION
-  // =================
   // Establishes WebSocket connection to the server
   const connect = useCallback(
     (connectUsername: string, connectChannel: string) => {
@@ -136,8 +134,6 @@ export function useWebSocket() {
     [addMessage]
   ); // Dependency: recreate if addMessage changes
 
-  // DISCONNECT FUNCTION
-  // ====================
   // Closes the WebSocket connection gracefully
   const disconnect = useCallback(() => {
     if (wsRef.current) {
@@ -147,8 +143,6 @@ export function useWebSocket() {
     }
   }, []);
 
-  // SEND MESSAGE FUNCTION
-  // ======================
   // Sends a message through the WebSocket
   const sendMessage = useCallback((content: string) => {
     // Validation: Can only send if connected
@@ -172,6 +166,18 @@ export function useWebSocket() {
     console.log('[HOOK] Sending message:', message);
     wsRef.current.send(JSON.stringify(message));
   }, []);
+
+  useEffect(() => {
+    return () => {
+      // CLEANUP: This runs when component unmounts
+
+      if (wsRef.current) {
+        console.log('[HOOK] Component unmounting - closing WebSocket');
+        wsRef.current.close(); // Gracefully close the connection
+        wsRef.current = null;
+      }
+    };
+  }, []); // Empty dependency array = run once on mount, cleanup on unmount
 
   // This is what components using this hook will have access to
   return {
