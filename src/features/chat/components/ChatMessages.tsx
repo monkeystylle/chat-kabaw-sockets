@@ -34,30 +34,13 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
 
   // When messages change, we scroll to bottom
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      let scrollableElement = scrollContainerRef.current.parentElement;
+    if (!scrollContainerRef.current) return;
 
-      while (scrollableElement) {
-        const overflow = window.getComputedStyle(scrollableElement).overflow;
-        const overflowY = window.getComputedStyle(scrollableElement).overflowY;
-
-        if (
-          overflow === 'auto' ||
-          overflow === 'scroll' ||
-          overflowY === 'auto' ||
-          overflowY === 'scroll' ||
-          scrollableElement.hasAttribute('data-radix-scroll-area-viewport')
-        ) {
-          scrollableElement.scrollTop = scrollableElement.scrollHeight;
-          break;
-        }
-
-        scrollableElement = scrollableElement.parentElement;
-
-        if (!scrollableElement || scrollableElement === document.body) {
-          break;
-        }
-      }
+    const viewport = scrollContainerRef.current.closest(
+      '[data-radix-scroll-area-viewport]'
+    );
+    if (viewport) {
+      viewport.scrollTop = viewport.scrollHeight;
     }
   }, [messages]); // Dependency: run when messages array changes
 
