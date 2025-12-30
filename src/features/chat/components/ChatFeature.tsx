@@ -17,6 +17,9 @@ export function ChatFeature() {
     error,
   } = useWebSocket();
 
+  // 🧪 TEST GLOBAL ERROR: Uncomment the line below to test global error.tsx
+  // throw new Error('Testing global error boundary!');
+
   return (
     <div className="space-y-4">
       {/* Header */}
