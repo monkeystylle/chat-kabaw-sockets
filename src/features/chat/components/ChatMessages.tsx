@@ -20,7 +20,6 @@
 
 import { useEffect, useRef } from 'react';
 import { ChatMessage } from '../types';
-import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatMessagesProps {
@@ -50,63 +49,57 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
   };
 
   return (
-    <Card className="mb-4">
-      <CardContent className="p-0">
-        {/* ScrollArea is a shadcn component that makes content scrollable */}
-        <ScrollArea className="h-100 p-4">
-          <div ref={scrollContainerRef} className="space-y-4">
-            {messages.map((message, index) => {
-              // Check if this message is from the current user
-              const isCurrentUser = message.username === currentUsername;
+    <ScrollArea className="h-full p-4">
+      <div ref={scrollContainerRef} className="space-y-4">
+        {messages.map((message, index) => {
+          // Check if this message is from the current user
+          const isCurrentUser = message.username === currentUsername;
 
-              // SYSTEM MESSAGES
-
-              if (message.type === 'system') {
-                return (
-                  <div key={index} className="flex justify-center">
-                    <div className="bg-muted px-3 py-1 rounded-full text-sm text-muted-foreground italic">
-                      {message.content}
-                    </div>
-                  </div>
-                );
-              }
-
-              // Regular chat messages aligned based on sender
-              return (
-                <div
-                  key={index}
-                  className={`flex ${
-                    isCurrentUser ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  <div
-                    className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                      isCurrentUser
-                        ? 'bg-primary text-primary-foreground' // Blue for current user
-                        : 'bg-muted' // Gray for others
-                    }`}
-                  >
-                    {/* Message Header: Username + Timestamp */}
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm">
-                        {message.username}
-                      </span>
-                      <span className="text-xs opacity-70">
-                        {formatTime(message.timestamp)}
-                      </span>
-                    </div>
-
-                    {/* Message Content */}
-                    <div className="text-sm wrap-break-word">
-                      {message.content}
-                    </div>
-                  </div>
+          // SYSTEM MESSAGES
+          if (message.type === 'system') {
+            return (
+              <div key={index} className="flex justify-center">
+                <div className="bg-muted px-3 py-1 rounded-full text-sm text-muted-foreground italic">
+                  {message.content}
                 </div>
-              );
-            })}
-          </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+              </div>
+            );
+          }
+
+          // Regular chat messages aligned based on sender
+          return (
+            <div
+              key={index}
+              className={`flex ${
+                isCurrentUser ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              <div
+                className={`max-w-[70%] rounded-lg px-4 py-2 ${
+                  isCurrentUser
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
+                }`}
+              >
+                {/* Message Header: Username + Timestamp */}
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold text-sm">
+                    {message.username}
+                  </span>
+                  <span className="text-xs opacity-70">
+                    {formatTime(message.timestamp)}
+                  </span>
+                </div>
+
+                {/* Message Content */}
+                <div className="text-sm wrap-break-word">
+                  {message.content}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </ScrollArea>
   );
 }

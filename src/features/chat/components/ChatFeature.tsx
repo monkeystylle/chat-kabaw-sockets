@@ -1,10 +1,9 @@
-'use client'; // Required because we use React hooks (useState, useEffect)
+'use client';
 
 import { useWebSocket } from '../hooks/useWebSocket';
-import { ChatMessages } from './ChatMessages';
+import { ChatWindow } from './ChatWindow';
 import { ConnectionForm } from './ConnectionForm';
 import { Instructions } from './Instructions';
-import { MessageInput } from './MessageInput';
 
 export function ChatFeature() {
   const {
@@ -37,11 +36,10 @@ export function ChatFeature() {
         connectionStatus={connectionStatus}
       />
 
-      {/* Chat Messages Display */}
-      <ChatMessages messages={messages} currentUsername={username} />
-
-      {/* Message Input Form */}
-      <MessageInput
+      {/* Chat Window - Combined messages display and input */}
+      <ChatWindow
+        messages={messages}
+        currentUsername={username}
         onSendMessage={sendMessage}
         disabled={connectionStatus !== 'connected'}
       />
