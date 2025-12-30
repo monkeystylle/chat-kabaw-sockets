@@ -29,13 +29,35 @@ interface ChatMessagesProps {
 }
 
 export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // Ref to the scrollable container
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // When messages change, we scroll to bottom
   useEffect(() => {
-    if (scrollRef.current) {
-      // scrollIntoView scrolls element into visible area
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (scrollContainerRef.current) {
+      let scrollableElement = scrollContainerRef.current.parentElement;
+
+      while (scrollableElement) {
+        const overflow = window.getComputedStyle(scrollableElement).overflow;
+        const overflowY = window.getComputedStyle(scrollableElement).overflowY;
+
+        if (
+          overflow === 'auto' ||
+          overflow === 'scroll' ||
+          overflowY === 'auto' ||
+          overflowY === 'scroll' ||
+          scrollableElement.hasAttribute('data-radix-scroll-area-viewport')
+        ) {
+          scrollableElement.scrollTop = scrollableElement.scrollHeight;
+          break;
+        }
+
+        scrollableElement = scrollableElement.parentElement;
+
+        if (!scrollableElement || scrollableElement === document.body) {
+          break;
+        }
+      }
     }
   }, [messages]); // Dependency: run when messages array changes
 
@@ -49,7 +71,7 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
       <CardContent className="p-0">
         {/* ScrollArea is a shadcn component that makes content scrollable */}
         <ScrollArea className="h-100 p-4">
-          <div className="space-y-4">
+          <div ref={scrollContainerRef} className="space-y-4">
             {messages.map((message, index) => {
               // Check if this message is from the current user
               const isCurrentUser = message.username === currentUsername;
@@ -66,8 +88,6 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
                 );
               }
 
-              // USER/OTHER MESSAGES
-              // ====================
               // Regular chat messages aligned based on sender
               return (
                 <div
@@ -101,9 +121,6 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
                 </div>
               );
             })}
-
-            {/* Invisible div at bottom for auto-scroll target */}
-            <div ref={scrollRef} />
           </div>
         </ScrollArea>
       </CardContent>

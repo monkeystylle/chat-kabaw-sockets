@@ -29,6 +29,9 @@ export function ChatFeature() {
         </p>
       </div>
 
+      {/* Instructions */}
+      <Instructions />
+
       {/* Connection Form - handles username/channel input and connect/disconnect */}
       <ConnectionForm
         onConnect={connect}
@@ -47,9 +50,6 @@ export function ChatFeature() {
         onSendMessage={sendMessage}
         disabled={connectionStatus !== 'connected'}
       />
-
-      {/* Instructions */}
-      {/* <Instructions /> */}
     </div>
   );
 }

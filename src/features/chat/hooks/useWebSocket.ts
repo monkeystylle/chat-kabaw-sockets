@@ -177,9 +177,8 @@ export function useWebSocket() {
         wsRef.current = null;
       }
     };
-  }, []); // Empty dependency array = run once on mount, cleanup on unmount
+  }, []);
 
-  // This is what components using this hook will have access to
   return {
     messages,
     connectionStatus,
