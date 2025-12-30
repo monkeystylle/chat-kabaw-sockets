@@ -93,6 +93,14 @@ export function useWebSocket() {
               currentUserIDRef.current = message.user_id;
               setCurrentUserID(message.user_id);
               console.log(`[HOOK] User ID assigned: ${message.user_id}`);
+
+              // Add system message showing the user ID
+              addMessage({
+                type: 'system',
+                username: 'System',
+                content: `Your user ID: ${message.user_id}`,
+                timestamp: new Date().toISOString(),
+              });
             }
 
             // Add the message to our messages array
