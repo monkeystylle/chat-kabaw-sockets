@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chat Application - WebSocket Client
 
-## Getting Started
+A real-time chat application built with Next.js and WebSocket technology, featuring a modern UI with error boundaries and comprehensive error handling.
 
-First, run the development server:
+## 🎯 Project Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This is a WebSocket-based chat client that connects to the Kabaw Sockets test server. It demonstrates real-time messaging, connection management, and robust error handling in a React/Next.js environment.
+
+## 📋 Prerequisites
+
+Before running this application, you need to have the following installed:
+
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **Git**
+
+## 🚀 Getting Started
+
+### Step 1: Set Up the WebSocket Server
+
+First, you need to download and run the Kabaw Sockets test server:
+
+1. Clone the server repository:
+
+   ```bash
+   git clone https://github.com/kabaw-ai/kabaw-sockets.git
+   cd kabaw-sockets
+   ```
+
+2. Follow the instructions in the server's README to start it
+   - The server will run on `http://localhost:8080` by default
+   - Make sure the server is running before starting the client
+
+### Step 2: Set Up the Chat Client
+
+1. **Clone this repository:**
+
+   ```bash
+   git clone <your-repository-url>
+   cd chat-kabaw-sockets
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser:**
+   ```
+   Navigate to http://localhost:3000
+   ```
+
+## 📖 How to Use
+
+1. **Enter your details:**
+
+   - Fill in your username (default: "testKabaw")
+   - Enter a channel name (default: "general")
+
+2. **Connect to the server:**
+
+   - Click the "Connect" button
+   - Wait for the connection status to show "Connected"
+   - You'll receive a unique user ID
+
+3. **Start chatting:**
+
+   - Type your message in the input field
+   - Press Enter or click "Send"
+   - Messages appear in real-time for all connected users
+
+4. **Disconnect:**
+   - Click the "Disconnect" button when you're done
+
+## 🧪 Testing
+
+### Test Multiple Users
+
+Open multiple browser tabs to simulate different users and see real-time message synchronization.
+
+## 📁 Project Structure
+
+This project follows a **Feature-Driven Architecture (FDD)** pattern, which organizes code by features rather than technical layers. This approach improves scalability, maintainability, and makes the codebase easier to navigate.
+
+### Why Feature-Driven Architecture?
+
+- **Better organization:** All code related to a feature lives together
+- **Easier maintenance:** Changes to a feature are isolated to one directory
+- **Improved scalability:** Easy to add new features without affecting existing ones
+- **Clear boundaries:** Each feature is self-contained with its own components, hooks, and types
+
+Read more: [Feature-Driven Architecture with Next.js](https://dev.to/rufatalv/feature-driven-architecture-with-nextjs-a-better-way-to-structure-your-application-1lph)
+
+### Directory Structure
+
+```
+src/
+├── app/                          # Next.js app directory
+│   ├── error.tsx                # Global error boundary
+│   └── page.tsx                 # Main page
+├── features/                    # Feature-based modules
+│   └── chat/                    # Chat feature (self-contained)
+│       ├── components/          # Chat UI components
+│       │   ├── ChatFeature.tsx
+│       │   ├── ChatMessages.tsx
+│       │   ├── ChatWindow.tsx
+│       │   ├── ConnectionForm.tsx
+│       │   ├── ConnectionStatus.tsx
+│       │   ├── MessageInput.tsx
+│       │   └── Instructions.tsx
+│       ├── hooks/
+│       │   └── useWebSocket.ts  # WebSocket connection logic
+│       └── types/
+│           └── index.ts         # TypeScript type definitions
+└── components/
+    └── ui/                      # Shared/reusable UI components
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📝 Notes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- This application was built as part of a technical assessment
+- The WebSocket server must be running for the chat to function
+- Messages are not persisted; they exist only during active connections
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🙏 Acknowledgments
 
-## Learn More
+- Built for Kabaw AI technical assessment
+- WebSocket server: [kabaw-sockets](https://github.com/kabaw-ai/kabaw-sockets)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with ❤️ using Next.js and WebSocket
