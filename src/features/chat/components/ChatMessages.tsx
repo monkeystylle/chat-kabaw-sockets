@@ -9,11 +9,7 @@
  * - Auto-scroll to bottom when new messages arrive
  * - Format timestamps nicely
  *
- * Key React Concepts Used:
- * - useRef: To access DOM element for scrolling
- * - useEffect: To scroll when messages change
- * - map: To render array of messages
- * - Conditional styling: Different styles per message type
+
  */
 
 'use client';
@@ -50,6 +46,37 @@ export function ChatMessages({ messages, currentUsername }: ChatMessagesProps) {
 
   // 🧪 TEST: Uncomment the line below to simulate an error
   // throw new Error('This is a test error to preview the error boundary!');
+
+  // Empty state when no messages
+  if (messages.length === 0) {
+    return (
+      <ScrollArea className="h-full p-4">
+        <div className="flex flex-col items-center justify-center h-full min-h-100">
+          <div className="mb-4">
+            <svg
+              className="w-20 h-20 text-muted-foreground/40"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-muted-foreground">
+            No messages yet
+          </p>
+          <p className="text-sm text-muted-foreground/70 mt-1">
+            Connect to start chatting
+          </p>
+        </div>
+      </ScrollArea>
+    );
+  }
 
   return (
     <ScrollArea className="h-full p-4">
