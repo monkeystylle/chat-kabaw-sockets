@@ -34,14 +34,6 @@ export function ChatFeature() {
         </p>
       </div>
 
-      {/* Loading State */}
-      {connectionStatus === 'connecting' && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg flex items-center gap-2">
-          <div className="animate-spin h-4 w-4 border-2 border-blue-700 border-t-transparent rounded-full"></div>
-          <p className="font-semibold">Connecting to server...</p>
-        </div>
-      )}
-
       {/* Error Display */}
       {error && (
         <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg">

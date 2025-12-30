@@ -43,6 +43,19 @@ export function ConnectionStatus({
     md: 'text-sm px-4 py-2',
   };
 
+  // Show loading state with spinner when connecting
+  if (status === 'connecting') {
+    return (
+      <div className={`flex items-center gap-2 ${className}`}>
+        <div className="animate-spin h-4 w-4 border-2 border-blue-700 border-t-transparent rounded-full"></div>
+        <span className="text-sm font-semibold text-blue-700">
+          Connecting to server...
+        </span>
+      </div>
+    );
+  }
+
+  // Show badge for connected/disconnected states
   return (
     <Badge
       variant={config.variant}

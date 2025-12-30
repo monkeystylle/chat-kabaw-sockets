@@ -136,7 +136,7 @@ export function useWebSocket() {
           addMessage({
             type: 'system',
             username: 'System',
-            content: 'Connection error occurred',
+            content: 'Connection Error',
             timestamp: new Date().toISOString(),
           });
         };
