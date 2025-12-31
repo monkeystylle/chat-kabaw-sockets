@@ -1,7 +1,3 @@
-# Chat Application - WebSocket Client
-
-A real-time chat application built with Next.js and WebSocket technology, featuring a modern UI with error boundaries and comprehensive error handling.
-
 ## 🎯 Project Overview
 
 This is a WebSocket-based chat client that connects to the Kabaw Sockets test server. It demonstrates real-time messaging, connection management, and robust error handling in a React/Next.js environment.
